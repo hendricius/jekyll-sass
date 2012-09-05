@@ -10,10 +10,10 @@ module Jekyll
       #
       # Returns destination file path.
       def destination(dest)
-        File.join(dest, @dir, @name.sub(/scss$/, 'css'))
+        File.join(dest, @dir, @name.sub(/sass$/, 'css'))
       end
 
-      # Convert the scss file into a css file.
+      # Convert the sass file into a css file.
       #   +dest+ is the String path to the destination dir
       #
       # Returns false if the file was not modified since last time (no-op).
@@ -26,7 +26,7 @@ module Jekyll
         FileUtils.mkdir_p(File.dirname(dest_path))
         begin
           content = File.read(path)
-          engine = ::Sass::Engine.new( content, :syntax => :scss, :load_paths => ["#{@site.source}#{@dir}"], :style => :compressed )
+          engine = ::Sass::Engine.new( content, :syntax => :sass, :load_paths => ["#{@site.source}#{@dir}"], :style => :compressed )
           content = engine.render
           File.open(dest_path, 'w') do |f|
             f.write(content)
@@ -44,12 +44,12 @@ module Jekyll
     class SassCssGenerator < Generator
       safe true
 
-      # Jekyll will have already added the *.scss files as Jekyll::StaticFile
+      # Jekyll will have already added the *.sass files as Jekyll::StaticFile
       # objects to the static_files array.  Here we replace those with a
       # SassCssFile object.
       def generate(site)
         site.static_files.clone.each do |sf|
-          if sf.kind_of?(Jekyll::StaticFile) && sf.path =~ /\.scss$/
+          if sf.kind_of?(Jekyll::StaticFile) && sf.path =~ /\.sass$/
             site.static_files.delete(sf)
             name = File.basename(sf.path)
             destination = File.dirname(sf.path).sub(site.source, '')
